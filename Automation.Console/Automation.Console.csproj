@@ -7,4 +7,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Pulumi.Automation" Version="3.46.1" />
+      <PackageReference Include="Spectre.Console" Version="0.45.0" />
+    </ItemGroup>
+
 </Project>

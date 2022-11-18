@@ -3,23 +3,43 @@ using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
 using Pulumi.AzureNative.Storage.Inputs;
 using System.Collections.Generic;
+using Deployment = Pulumi.Deployment;
 
-return await Pulumi.Deployment.RunAsync(() =>
+return await Deployment.RunAsync(() =>
 {
-    // Create an Azure Resource Group
-    var resourceGroup = new ResourceGroup("resourceGroup");
+    const string projectName = "automation";
+    var stackName = Deployment.Instance.StackName;
+    var env = stackName.Split("-")[0];
+    
+    #region Resource Group
 
-    // Create an Azure resource (Storage Account)
-    var storageAccount = new StorageAccount("sa", new StorageAccountArgs
+    var resourceGroupName = $"{projectName}-{env}-rg";
+    var resourceGroup = new ResourceGroup(resourceGroupName, new ResourceGroupArgs
     {
-        ResourceGroupName = resourceGroup.Name,
-        Sku = new SkuArgs
-        {
-            Name = SkuName.Standard_LRS
-        },
-        Kind = Kind.StorageV2
+        ResourceGroupName = resourceGroupName
     });
 
+    #endregion
+
+    #region Storage Account
+
+    var storageAccountName = $"{projectName}{env}st".Replace("-", string.Empty);
+    var storageAccount = new StorageAccount(storageAccountName, new StorageAccountArgs
+    {
+        AccountName = storageAccountName,
+        ResourceGroupName = resourceGroup.Name,
+        MinimumTlsVersion = "TLS1_2",
+        EnableHttpsTrafficOnly = true,
+        AccessTier = AccessTier.Hot,
+        AllowBlobPublicAccess = true,
+        AllowSharedKeyAccess = true,
+        Kind = "StorageV2",
+        Sku = new SkuArgs
+        {
+            Name = "Standard_LRS"
+        }
+    });
+    
     var storageAccountKeys = ListStorageAccountKeys.Invoke(new ListStorageAccountKeysInvokeArgs
     {
         ResourceGroupName = resourceGroup.Name,
@@ -31,8 +51,10 @@ return await Pulumi.Deployment.RunAsync(() =>
         var firstKey = accountKeys.Keys[0].Value;
         return Output.CreateSecret(firstKey);
     });
-
-    // Export the primary key of the Storage Account
+    
+    #endregion
+    
+    // Outputs
     return new Dictionary<string, object?>
     {
         ["primaryStorageKey"] = primaryStorageKey

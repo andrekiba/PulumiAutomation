@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automation.Console", "Automation.Console\Automation.Console.csproj", "{CC793EDB-FB2C-4F6F-8D87-E9EE7701A679}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automation.Infra", "Automation.Infra\Automation.Infra.csproj", "{AFE94B97-836F-4360-AC3F-D53AB835ED84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{CC793EDB-FB2C-4F6F-8D87-E9EE7701A679}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC793EDB-FB2C-4F6F-8D87-E9EE7701A679}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC793EDB-FB2C-4F6F-8D87-E9EE7701A679}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE94B97-836F-4360-AC3F-D53AB835ED84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE94B97-836F-4360-AC3F-D53AB835ED84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE94B97-836F-4360-AC3F-D53AB835ED84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE94B97-836F-4360-AC3F-D53AB835ED84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
