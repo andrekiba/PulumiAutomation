@@ -3,18 +3,19 @@ using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Storage;
 using Pulumi.AzureNative.Storage.Inputs;
 using System.Collections.Generic;
+using System.IO;
+using Automation.Resources;
 using Deployment = Pulumi.Deployment;
 using Storage = Pulumi.AzureNative.Storage;
 
 return await Deployment.RunAsync(() =>
 {
-    const string projectName = "automation";
+    var projectName = Deployment.Instance.ProjectName;
     var stackName = Deployment.Instance.StackName;
-    var env = stackName.Split("-")[0];
-    
+
     #region Resource Group
 
-    var resourceGroupName = $"{projectName}-{env}-rg";
+    var resourceGroupName = $"{projectName}-{stackName}-rg";
     var resourceGroup = new ResourceGroup(resourceGroupName, new ResourceGroupArgs
     {
         ResourceGroupName = resourceGroupName
@@ -23,8 +24,8 @@ return await Deployment.RunAsync(() =>
     #endregion
 
     #region Storage Account
-
-    var storageAccountName = $"{projectName}{env}st".Replace("-", string.Empty);
+    
+    var storageAccountName = $"{projectName}{stackName}st".Replace("-", string.Empty);
     var storageAccount = new StorageAccount(storageAccountName, new StorageAccountArgs
     {
         AccountName = storageAccountName,
@@ -41,7 +42,6 @@ return await Deployment.RunAsync(() =>
         }
     });
     
-    // Enable static website support
     var staticWebSiteName = $"{storageAccount.Name}-sbs";
     var staticWebsite = new StorageAccountStaticWebsite(staticWebSiteName, new StorageAccountStaticWebsiteArgs
     {
@@ -59,7 +59,7 @@ return await Deployment.RunAsync(() =>
         Source = new FileAsset("./wwwroot/index.html"),
         ContentType = "text/html"
     });
-    var notfoundHtml = new Storage.Blob("404.html", new BlobArgs
+    var notfoundHtml = new Blob("404.html", new BlobArgs
     {
         ResourceGroupName = resourceGroup.Name,
         AccountName = storageAccount.Name,
@@ -69,23 +69,27 @@ return await Deployment.RunAsync(() =>
     });
     
     var staticEndpoint = storageAccount.PrimaryEndpoints.Apply(primaryEndpoints => primaryEndpoints.Web);
-    var storageAccountKeys = ListStorageAccountKeys.Invoke(new ListStorageAccountKeysInvokeArgs
-    {
-        ResourceGroupName = resourceGroup.Name,
-        AccountName = storageAccount.Name
-    });
-    var primaryStorageKey = storageAccountKeys.Apply(accountKeys =>
-    {
-        var firstKey = accountKeys.Keys[0].Value;
-        return Output.CreateSecret(firstKey);
-    });
     
+    #endregion
+
+    #region StaticSite
+    /*
+    var staticSiteName = $"{projectName}-{stackName}-ss";
+    var staticSite = new StaticSite(staticSiteName, new StatiSiteArgs
+    {
+        ResourceGroup = resourceGroup,
+        ProjectName = projectName,
+        SiteName = stackName,
+        Content = File.ReadAllText("./wwwroot/index.html"),
+        Content404 = File.ReadAllText("./wwwroot/404.html")
+    }); 
+    */
     #endregion
     
     // Outputs
     return new Dictionary<string, object?>
     {
-        ["primaryStorageKey"] = primaryStorageKey,
-        ["staticEndpoint"] = staticEndpoint
+        ["staticEndpoint"] = staticEndpoint,
+        //["staticEndpoint"] = staticSite.StaticEndpoint
     };
 });
