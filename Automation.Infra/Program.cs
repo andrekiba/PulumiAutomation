@@ -10,7 +10,7 @@ using Storage = Pulumi.AzureNative.Storage;
 
 return await Deployment.RunAsync(() =>
 {
-    var projectName = Deployment.Instance.ProjectName;
+    const string projectName = "automation";
     var stackName = Deployment.Instance.StackName;
 
     #region Resource Group
@@ -42,7 +42,7 @@ return await Deployment.RunAsync(() =>
         }
     });
     
-    var staticWebSiteName = $"{storageAccount.Name}-sbs";
+    var staticWebSiteName = $"{storageAccountName}-sbs";
     var staticWebsite = new StorageAccountStaticWebsite(staticWebSiteName, new StorageAccountStaticWebsiteArgs
     {
         AccountName = storageAccount.Name,
