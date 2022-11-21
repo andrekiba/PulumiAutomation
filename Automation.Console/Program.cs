@@ -1,5 +1,4 @@
 ﻿// See https://aka.ms/new-console-template for more information
-
 // to destroy our program, we can run "dotnet run destroy"
 
 using System.Reflection;
@@ -20,41 +19,47 @@ namespace Automation.Console
             // need to account for the assembly executing from within the bin directory
             // when getting path to the local program
             var executingDir = new DirectoryInfo(Assembly.GetExecutingAssembly().Location).Parent?.FullName;
-            var workingDir = Path.Combine(executingDir, "..", "..", "..", "..", "Automation.Infra");
+            var workingDir = Path.Combine(executingDir!, "..", "..", "..", "..", "Automation.Infra");
             
             var stackArgs = new LocalProgramArgs(stackName, workingDir);
             var stack = await LocalWorkspace.CreateOrSelectStackAsync(stackArgs);
 
-            AnsiConsole.WriteLine("successfully initialized stack");
+            "successfully initialized stack".WriteLineColor("royalblue1");
 
             // set stack configuration specifying the region to deploy
-            AnsiConsole.WriteLine("setting up config...");
+            "setting up config...".WriteLineColor("royalblue1");
             await stack.SetConfigAsync("azure-native:location", new ConfigValue("westeurope"));
             await stack.SetConfigAsync("azure-native:subscriptionId", new ConfigValue("6b4ce01c-5368-4bb0-af54-be67444292c2"));
-            AnsiConsole.WriteLine("config set");
-
-            AnsiConsole.WriteLine("refreshing stack...");
-            await stack.RefreshAsync(new RefreshOptions { OnStandardOutput = System.Console.WriteLine });
-            AnsiConsole.WriteLine("refresh complete");
+            "config set".WriteLineColor("royalblue1");
+            
+            var pulumi = AnsiConsole.Create(new AnsiConsoleSettings
+            {
+                
+            });
+            
+            "refreshing stack...".WriteLineColor("royalblue1");
+            await stack.RefreshAsync(new RefreshOptions { OnStandardOutput = pulumi.WriteLine });
+            "refresh complete".WriteLineColor("royalblue1");
 
             if (destroy)
             {
-                AnsiConsole.WriteLine("destroying stack...");
-                await stack.DestroyAsync(new DestroyOptions { OnStandardOutput = System.Console.WriteLine });
-                AnsiConsole.WriteLine("stack destroy complete");
+                "destroying stack...".WriteLineColor("royalblue1");
+                await stack.DestroyAsync(new DestroyOptions { OnStandardOutput = pulumi.WriteLine });
+                "stack destroy complete".WriteLineColor("royalblue1");
             }
             else
             {
-                AnsiConsole.WriteLine("updating stack...");
-                var result = await stack.UpAsync(new UpOptions { OnStandardOutput = System.Console.WriteLine });
+                "updating stack...".WriteLineColor("royalblue1");
+                var result = await stack.UpAsync(new UpOptions { OnStandardOutput = pulumi.WriteLine });
 
                 if (result.Summary.ResourceChanges != null)
                 {
-                    AnsiConsole.WriteLine("update summary:");
+                    "update summary:".WriteLineColor("royalblue1");
                     foreach (var change in result.Summary.ResourceChanges)
-                        AnsiConsole.WriteLine($"    {change.Key}: {change.Value}");
+                        $"{change.Key}: {change.Value}".WriteLineColor("royalblue1");
                 }
-
+                
+                AnsiConsole.WriteLine($"staticEndpoint: {result.Outputs["staticEndpoint"].Value}");
                 AnsiConsole.WriteLine($"primaryStorageKey: {result.Outputs["primaryStorageKey"].Value}");
             }
         }
