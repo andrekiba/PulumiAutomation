@@ -85,9 +85,10 @@ public class AutomationController : ControllerBase
 
             var upResult = await stack.UpAsync(new UpOptions
             {
-                Logger = logger,
-                OnStandardOutput = s => logger.LogInformation(s),
-                OnStandardError = s => logger.LogError(s)
+                //OnStandardOutput = s => logger.LogInformation(s),
+                //OnStandardError = s => logger.LogError(s),
+                OnStandardOutput = Console.WriteLine,
+                OnStandardError = Console.WriteLine
             });
 
             return new OkObjectResult(new Site
@@ -114,9 +115,8 @@ public class AutomationController : ControllerBase
             var stack = await LocalWorkspace.SelectStackAsync(new InlineProgramArgs(projectName, siteName, program));
             var upResult = await stack.UpAsync(new UpOptions
             {
-                Logger = logger,
-                OnStandardOutput = s => logger.LogInformation(s),
-                OnStandardError = s => logger.LogError(s)
+                OnStandardOutput = Console.WriteLine,
+                OnStandardError = Console.WriteLine
             });
 
             return new OkObjectResult(new Site
@@ -146,8 +146,8 @@ public class AutomationController : ControllerBase
             var stack = await LocalWorkspace.SelectStackAsync(new InlineProgramArgs(projectName, siteName, PulumiFn.Create(() => { })));
             await stack.DestroyAsync(new DestroyOptions
             {
-                OnStandardOutput = s => logger.LogInformation(s),
-                OnStandardError = s => logger.LogError(s)
+                OnStandardOutput = Console.WriteLine,
+                OnStandardError = Console.WriteLine
             });
             await stack.Workspace.RemoveStackAsync(siteName);
             return Ok();
