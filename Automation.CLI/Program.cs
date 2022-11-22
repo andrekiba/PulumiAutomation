@@ -3,7 +3,7 @@ using Pulumi.Automation;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Automation.Console
+namespace Automation.CLI
 {
     internal static class Program
     {

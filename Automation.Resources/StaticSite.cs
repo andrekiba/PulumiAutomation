@@ -18,7 +18,7 @@ public class StatiSiteArgs
 
 public class StaticSite : ComponentResource
 {
-    public Output<string> StaticEndpoint { get; }
+    public Output<string>? StaticEndpoint { get; }
 
     public StaticSite(string name, StatiSiteArgs args, ComponentResourceOptions? options = null)
         : base("automation:resources:StaticSite", name, options)

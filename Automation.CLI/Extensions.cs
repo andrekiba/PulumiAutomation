@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace Automation.Console;
+namespace Automation.CLI;
 
 public static class Extensions
 {
