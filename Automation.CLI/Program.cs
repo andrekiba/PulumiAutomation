@@ -9,17 +9,8 @@ namespace Automation.CLI
     {
         static async Task Main(string[] args)
         {
-            var app = new CommandApp();
-            app.Configure(config =>
-            {
-                config.AddCommand<UpCommand>("up");
-                config.AddCommand<RefreshCommand>("refresh");
-                config.AddCommand<DestroyCommand>("destroy");
-            });
-            await app.RunAsync(args);
-            
+            #region CLI
             /*
-            
             // to destroy our program, we can run "dotnet run destroy"
             var destroy = args.Any() && args[0] == "destroy";
 
@@ -65,8 +56,17 @@ namespace Automation.CLI
                 
                 AnsiConsole.WriteLine($"staticEndpoint: {result.Outputs["staticEndpoint"].Value}");
             }
-            
             */
+            #endregion
+            
+            var app = new CommandApp();
+            app.Configure(config =>
+            {
+                config.AddCommand<UpCommand>("up");
+                config.AddCommand<RefreshCommand>("refresh");
+                config.AddCommand<DestroyCommand>("destroy");
+            });
+            await app.RunAsync(args);
         }
         internal sealed class UpCommand : AsyncCommand<UpCommand.Settings>
         {
